@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>관리자 주문 확인</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #dc3545;
+        }
+
+        section {
+            margin-bottom: 30px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f8d7da;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-left: 5px solid #dc3545;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button.complete-btn {
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.complete-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>관리자 주문 확인창</h1>
+
+    <section>
+        <h2>해야 할 주문</h2>
+        <ul id="pendingOrders"></ul>
+    </section>
+
+    <section>
+        <h2>완료한 주문</h2>
+        <ul id="completedOrders"></ul>
+    </section>
+
+    <script>
+        const socket = io();
+
+        const pendingOrders = document.getElementById('pendingOrders');
+        const completedOrders = document.getElementById('completedOrders');
+
+        // 새 주문 받기
+        socket.on('newOrder', ({ menu, name, seat }) => {
+            const li = document.createElement('li');
+            const time = new Date().toLocaleTimeString();
+            li.innerHTML = `[${time}]  손님: ${name}  [좌석 ${seat}] ${menu} 주문 접수`;
+
+
+            // 완료 버튼 생성
+            const completeBtn = document.createElement('button');
+            completeBtn.textContent = '완료';
+            completeBtn.className = 'complete-btn';
+
+            // 완료 버튼 클릭 시 처리
+            completeBtn.addEventListener('click', () => {
+                // 완료한 주문 리스트로 이동
+                pendingOrders.removeChild(li);
+                completedOrders.prepend(li);
+                // 완료 버튼 비활성화 또는 제거
+                completeBtn.disabled = true;
+                completeBtn.textContent = '완료됨';
+            });
+
+            li.appendChild(completeBtn);
+            pendingOrders.prepend(li);
+        });
+    </script>
+</body>
+
+</html>
