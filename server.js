@@ -9,6 +9,7 @@ const path = require('path');
 app.use(express.static('public'));
 app.use(express.json());
 
+// 주문 내용 전송
 app.post('/order', (req, res) => {
     const { menu, name, seat } = req.body;
     console.log(`[주문] ${menu} / 손님: ${name} / 좌석번호: ${seat}`);
@@ -17,9 +18,11 @@ app.post('/order', (req, res) => {
     res.json({ message: `${name}님, ${menu} 주문이 서버에 도착했습니다!` });
 });
 
+// 관리자 주문 확인 페이지로 이동
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
+
 
 http.listen(PORT, () => {
     console.log(`서버 실행 중: http://localhost:${PORT}`);
